@@ -11,12 +11,6 @@ const contactSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    validate: {
-      validator: function(v) {
-        return /^.+@.+\..+$/.test(v);
-      },
-      message: props => `${props.value} is not a valid email!`
-    },
     required: false
   },
   isFavourite: {
