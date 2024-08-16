@@ -1,10 +1,11 @@
-import Contact from "../db/models/contacts.js";
-export const getAllContacts = async () => {
-  const contacts = await Contact.find();
-  return contacts;
-};
 
-export const getContactsById = async (contactId) => {
-  const contact = await Contact.findById(contactId);
-  return contact;
-};
+import express from 'express';
+import { getAllContactsController, getContactsByIdController } from '../controllers/contacts.js';
+
+const router = express.Router();
+
+router.get('/contacts', getAllContactsController);
+
+router.get('/contacts/:contactId', getContactsByIdController);
+
+export default router;
