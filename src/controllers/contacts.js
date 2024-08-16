@@ -1,4 +1,4 @@
-import { createError } from 'http-errors';
+import  createError from 'http-errors';
 
 import {getAllContacts,
   getContactsById,
@@ -68,7 +68,7 @@ export const patchContactsByIdController = async (req, res, next) => {
     next(error);
   }
 };
-export const deleteContactsController = async (req, res, next) => {
+export const deleteContactsByIdController = async (req, res, next) => {
     try {
         const { contactId } = req.params;
         const result = await deleteContact(contactId);
@@ -77,7 +77,11 @@ export const deleteContactsController = async (req, res, next) => {
             return next(createError(404, 'Contact not found'));
         }
 
-        res.status(204).send();
+       res.json({
+      status: 204,
+    
+      data: result.contact,
+    });
     } catch (error) {
         next(error);
     };
