@@ -8,14 +8,11 @@ export const initMongoConnection = async () => {
     try {
         const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
         
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(uri);
 
         console.log('Mongo connection successfully established!');
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
-        process.exit(1); // Exit the process with failure code
+        throw error;
     }
 }
