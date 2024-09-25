@@ -4,7 +4,9 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
 import { Session } from '../db/models/session.js';
-import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL } from "../constants/index.js";
+import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL, SMTP } from "../constants/index.js";
+import { sendMail } from "../utils/mail.js";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (payload) => {
     const maybeUser = await UsersCollection.findOne({ email: payload.email });
@@ -59,4 +61,58 @@ export const refreshUserSession = async (sessionId, refreshToken) => {
 
 export function logoutUser(sessionId) {
   return Session.deleteOne({ _id: sessionId });
+}
+
+export async function requestResetEmail(email) {
+  const user = await UsersCollection.findOne({ email })
+  if (user === null) {
+    throw createHttpError(404, "User not found!")
+    
+  }
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '5m' },
+  );
+
+ const resetUrl = `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`;
+
+
+  try {
+    await sendMail({
+      from: SMTP.FROM_EMAIL,
+      to: email,
+      subject: "Reset your password",
+      html: `<h1>Please open this <a href="${resetUrl}">link</a> to reset your password</h1>`
+    })
+  } catch {
+    throw createHttpError(500, "Failed to send the email, please try again later.");
+  }
+}
+
+export async function resetPassword(password, token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    const user = await UsersCollection.findOne({_id:decoded.sub, email:decoded.email})
+ if (user === null) {
+  throw createHttpError(404,"User not found!" )
+ }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+     await UsersCollection.findOneAndUpdate(
+      { _id: user._id },
+      { password: hashedPassword },
+    );
+  } catch (error) {
+    if (error.name === 'TokenExpiredError' ||
+      error.name === 'JsonWebTokenError') {
+      throw createHttpError(401,"Token is expired or invalid.")
+    }
+  }
+
+
 }

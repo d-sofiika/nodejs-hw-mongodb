@@ -1,6 +1,8 @@
 import express from 'express';
+import path from "node:path"
 import pino from 'pino-http';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
 import contactsRouter from './routers/contacts.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
@@ -8,7 +10,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import authRoutes from './routers/auth.js';
 import cookieParser from 'cookie-parser';
 
-
+dotenv.config();
 export const setupServer = () => {
   const server = express();
   server.use(express.json());
@@ -16,7 +18,7 @@ export const setupServer = () => {
   server.use(cookieParser());
   
   const PORT = process.env.PORT || 3000;
-
+server.use("/avatars", express.static(path.resolve("src", "public/avatars")))
   server.use(
     pino({
       transport: {
