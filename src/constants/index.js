@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 export const SORT_ORDER = {
     ASC: 'asc',
   DESC: 'desc',

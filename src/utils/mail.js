@@ -1,9 +1,11 @@
-import nodemailer from 'nodemailer';
-import { SMTP } from '../constants/index.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-console.log(process.env.SMTP_SERVER);
+
+import nodemailer from 'nodemailer';
+import { SMTP } from '../constants/index.js';
+
+console.log("SMTP", SMTP);
 const transport = nodemailer.createTransport({
   host: SMTP.SERVER,
   port: SMTP.PORT,
