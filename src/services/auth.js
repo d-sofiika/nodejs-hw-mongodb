@@ -64,6 +64,7 @@ export function logoutUser(sessionId) {
 }
 
 export async function requestResetEmail(email) {
+  console.log("Received email:", email);
   const user = await UsersCollection.findOne({ email })
   if (user === null) {
     throw createHttpError(404, "User not found!")
@@ -79,16 +80,19 @@ export async function requestResetEmail(email) {
   );
 
  const resetUrl = `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`;
-
+  console.log("Generated reset URL:", resetUrl);
 
   try {
+    console.log("Attempting to send email");
     await sendMail({
       from: SMTP.FROM_EMAIL,
       to: email,
       subject: "Reset your password",
       html: `<h1>Please open this <a href="${resetUrl}">link</a> to reset your password</h1>`
     })
-  } catch {
+      console.log("Email sent successfully");
+  } catch  (err) {
+     console.error("Failed to send email:", err);
     throw createHttpError(500, "Failed to send the email, please try again later.");
   }
 }
