@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 import createHttpError from "http-errors";
 import { UsersCollection } from "../db/models/user.js"
 import bcrypt from 'bcrypt';
