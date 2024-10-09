@@ -102,3 +102,6 @@ export async function resetPasswordController(req, res) {
 
   })
 }
+  export async function getOauthURLController(req, res) {
+    res.send("Get")
+  }
