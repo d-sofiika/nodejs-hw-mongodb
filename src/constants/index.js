@@ -1,4 +1,6 @@
+import path from 'node:path';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 
@@ -17,3 +19,6 @@ export const SMTP = {
   PASSWORD: process.env.SMTP_PASSWORD,
   FROM_EMAIL: process.env.SMTP_FROM_EMAIL
 }
+
+export const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+export const SWAGGER_PATH = path.join(process.cwd(), 'docs', 'swagger.json');
