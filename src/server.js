@@ -11,6 +11,8 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import authRoutes from './routers/auth.js';
 import cookieParser from 'cookie-parser';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
+  import { UPLOAD_DIR } from './constants/index.js';
 
 dotenv.config();
 
@@ -30,10 +32,11 @@ export const setupServer = () => {
     }),
   );
 
-  const swaggerDocument = YAML.load(path.resolve('docs', 'openapi.yaml')); // Використовуйте правильний шлях до вашого OpenAPI файлу
+  const swaggerDocument = YAML.load(path.resolve('docs/openapi.yaml')); 
   server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-
+server.use('/uploads', express.static(UPLOAD_DIR));
+  server.use('/api-docs', swaggerDocs());
 
 
   server.use('/contacts', contactsRouter);
